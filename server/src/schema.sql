@@ -1,8 +1,8 @@
-CREATE TYPE user_role AS ENUM ('ADMIN','SALES','WAREHOUSE','ACCOUNTS');
-CREATE TYPE customer_type AS ENUM ('RETAIL','WHOLESALE','DISTRIBUTOR');
-CREATE TYPE customer_status AS ENUM ('LEAD','ACTIVE','INACTIVE');
-CREATE TYPE challan_status AS ENUM ('DRAFT','CONFIRMED','CANCELLED');
-CREATE TYPE movement_type AS ENUM ('IN','OUT');
+DO $$ BEGIN CREATE TYPE user_role AS ENUM ('ADMIN','SALES','WAREHOUSE','ACCOUNTS'); EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+DO $$ BEGIN CREATE TYPE customer_type AS ENUM ('RETAIL','WHOLESALE','DISTRIBUTOR'); EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+DO $$ BEGIN CREATE TYPE customer_status AS ENUM ('LEAD','ACTIVE','INACTIVE'); EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+DO $$ BEGIN CREATE TYPE challan_status AS ENUM ('DRAFT','CONFIRMED','CANCELLED'); EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+DO $$ BEGIN CREATE TYPE movement_type AS ENUM ('IN','OUT'); EXCEPTION WHEN duplicate_object THEN NULL; END $$;
 CREATE TABLE IF NOT EXISTS users (id SERIAL PRIMARY KEY, name TEXT NOT NULL, email TEXT UNIQUE NOT NULL, password_hash TEXT NOT NULL, role user_role NOT NULL, created_at TIMESTAMPTZ DEFAULT now());
 CREATE TABLE IF NOT EXISTS customers (id SERIAL PRIMARY KEY, name TEXT NOT NULL, mobile TEXT NOT NULL, email TEXT, business_name TEXT, gst_number TEXT, type customer_type NOT NULL DEFAULT 'RETAIL', address TEXT, status customer_status NOT NULL DEFAULT 'LEAD', follow_up_date DATE, notes TEXT, created_at TIMESTAMPTZ DEFAULT now(), updated_at TIMESTAMPTZ DEFAULT now());
 CREATE TABLE IF NOT EXISTS customer_followups (id SERIAL PRIMARY KEY, customer_id INTEGER REFERENCES customers(id) ON DELETE CASCADE, note TEXT NOT NULL, follow_up_date DATE, created_by INTEGER REFERENCES users(id), created_at TIMESTAMPTZ DEFAULT now());
