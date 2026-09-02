@@ -1,3 +1,43 @@
-import fs from 'node:fs'; import path from 'node:path'; import bcrypt from 'bcryptjs'; import { pool, query } from './db.js';
-async function seed() { await pool.query(fs.readFileSync(path.join(process.cwd(), 'src/schema.sql'), 'utf8')); const password = await bcrypt.hash('Password@123', 10); for (const [name,email,role] of [['Admin User','admin@opsflow.test','ADMIN'],['Sales User','sales@opsflow.test','SALES'],['Warehouse User','warehouse@opsflow.test','WAREHOUSE'],['Accounts User','accounts@opsflow.test','ACCOUNTS']]) await query('INSERT INTO users(name,email,password_hash,role) VALUES($1,$2,$3,$4) ON CONFLICT(email) DO NOTHING',[name,email,password,role]); await query("INSERT INTO products(name,sku,category,unit_price,current_stock,minimum_stock,location) VALUES ('Premium Paper A4','PAPER-A4-80','Stationery',340,120,25,'Mumbai A-01'),('Packing Tape','TAPE-48','Packaging',65,8,15,'Mumbai B-04'),('Thermal Labels','LABEL-100','Packaging',220,65,20,'Delhi A-12') ON CONFLICT(sku) DO NOTHING"); console.log('Seed complete. Password for all users: Password@123'); await pool.end(); }
-seed().catch(e=>{console.error(e);process.exit(1)});
+import fs from 'node:fs';
+import path from 'node:path';
+import bcrypt from 'bcryptjs';
+import { pool, query } from './db.js';
+
+async function seed() {
+  await pool.query(
+    fs.readFileSync(
+      path.join(process.cwd(), 'src/schema.sql'),
+      'utf8'
+    )
+  );
+
+  const password = await bcrypt.hash('Password@123', 10);
+
+  const users = [
+    ['Admin User', 'admin@opsflow.test', 'ADMIN'],
+    ['Sales User', 'sales@opsflow.test', 'SALES'],
+    ['Warehouse User', 'warehouse@opsflow.test', 'WAREHOUSE'],
+    ['Accounts User', 'accounts@opsflow.test', 'ACCOUNTS']
+  ];
+
+  for (const [name, email, role] of users) {
+    await query(
+      `
+      INSERT INTO users(name, email, password_hash, role)
+      VALUES ($1, $2, $3, $4)
+      ON CONFLICT(email) DO NOTHING
+      `,
+      [name, email, password, role]
+    );
+  }
+
+  console.log('Seed complete.');
+  console.log('Password for all users: Password@123');
+
+  await pool.end();
+}
+
+seed().catch((e) => {
+  console.error(e);
+  process.exit(1);
+});
