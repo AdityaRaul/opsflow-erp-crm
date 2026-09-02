@@ -1,0 +1,12 @@
+{
+  "info": { "name": "OpsFlow ERP CRM API", "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json" },
+  "variable": [{ "key": "baseUrl", "value": "http://localhost:4000" }, { "key": "token", "value": "" }],
+  "item": [
+    { "name": "Login", "request": { "method": "POST", "header": [{ "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\n  \"email\": \"admin@opsflow.test\",\n  \"password\": \"Password@123\"\n}" }, "url": "{{baseUrl}}/auth/login" } },
+    { "name": "Dashboard", "request": { "method": "GET", "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }], "url": "{{baseUrl}}/dashboard" } },
+    { "name": "List customers", "request": { "method": "GET", "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }], "url": "{{baseUrl}}/customers" } },
+    { "name": "List products", "request": { "method": "GET", "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }], "url": "{{baseUrl}}/products" } },
+    { "name": "List challans", "request": { "method": "GET", "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }], "url": "{{baseUrl}}/challans" } },
+    { "name": "Stock movements", "request": { "method": "GET", "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }], "url": "{{baseUrl}}/stock-movements" } }
+  ]
+}
